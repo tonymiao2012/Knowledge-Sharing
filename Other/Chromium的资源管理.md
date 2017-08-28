@@ -105,6 +105,16 @@ def main():
 </code>
 </pre>
 
+#### Chromium浏览器程序调用资源
+
+目前已知的情况，chromium内部主要会通过如下方式调用资源，后续有待补充：
+
+| 类型        | 处理类           | 说明链接 |
+| :------------- |:-------------:| :-----|
+| 字符串      | l10n_util | https://github.com/adobe/chromium/blob/master/ui/base/l10n/l10n_util.cc |
+| 图片资源      | resource_bundle      |   https://github.com/adobe/chromium/blob/master/ui/base/resource/resource_bundle.h |
+
+
 #### Coding Sample：自定义图片资源pak包
 
 1.在/src/content/app下建立自己的image_res文件夹，里面包含图片文件和自定义的grd文件。grd文件格式如下:
