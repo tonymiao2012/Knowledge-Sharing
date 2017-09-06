@@ -106,4 +106,5 @@ Main world是从web获取的JS的执行容器，isolated world是chrome扩展部
 
 #### CEF app创建一个extension的时序
 
+
 ![extension sequence](../images/SequenceDiagram.PNG)
