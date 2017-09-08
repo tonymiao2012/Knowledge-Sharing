@@ -106,7 +106,7 @@ Main world是从web获取的JS的执行容器，isolated world是chrome扩展部
 
 ---
 
-#### CEF render app创建一个extension的时序
+#### CEF render创建JS extension的时序
 
 ![extension sequence](../images/SequenceDiagram.PNG)
 
@@ -117,6 +117,39 @@ Main world是从web获取的JS的执行容器，isolated world是chrome扩展部
 
 那么，到现在为止只是生成了一个object（modeljs），我们还要对这个modeljs做扩展，给它加方法和属性。对于给modeljs加方法，要用到时序图里注册好的CefV8Handler的Execute()。而对于给modeljs加属性，则要用到CefV8Accessor。
 这些东西在modeljs的JS扩展部分都有实现的代码。之后会另起一篇文章具体介绍。
+
+注意到时序里面声明了一个isolate manager，在这里说明下这个manager，我定位到这段code：
+
+```
+  CefV8IsolateManager()
+      : isolate_(v8::Isolate::GetCurrent()),
+        task_runner_(CefContentRendererClient::Get()->GetCurrentTaskRunner()),
+        message_listener_registered_(false),
+        worker_id_(0) {
+    DCHECK(isolate_);
+    DCHECK(task_runner_.get());
+  }
+```
+很明显，这段用到了V8::Isolate::GetCurrent方法。进一步查找官网，有这样的说明：
+*Isolate represents an isolated instance of the V8 engine. V8 isolates have completely separate states. Objects from one isolate must not be used in other isolates. When V8 is initialized a default isolate is implicitly created and entered. The embedder can create additional isolates and use them in parallel in multiple threads. An isolate can be entered by at most one thread at any given time. The Locker/Unlocker API must be used to synchronize.*
+也就是说，GetCurrent拿到的是当前thread进入的isolate的，而只在CEF源码中并没有找到Isolate::New声明部分。那么结合上面描述，每次V8初始化的时候都会隐式创建一个default isolate。我们可以由此推断，当前GetCurrent返回的isolate很可能是这个default isolate或者是当前render process的一个isolate。
+CEF代码本身没有创建Isolate。这样做的初衷我想是由于isolate创建本身就有很多overhead，没必要这样去做。
+
+结合上面的图例，拿到了current isolate，之前的JS原生代码（不需要native扩展的）就可以main world里面执行，直接通过wrapper调用blink的DOM element，而扩展代码在注册过的isolate world里面会进行解析执行。由ExtensionWrapper声明V8::Extension：
+
+```
+// V8 extension registration.
+
+class ExtensionWrapper : public v8::Extension {
+ public:
+  ExtensionWrapper(const char* extension_name,
+                   const char* javascript_code,
+                   CefV8Handler* handler)
+      : v8::Extension(extension_name, javascript_code), handler_(handler) {}
+```
+从而，CEF使原JS engine有了识别JS扩展的能力。
+
+---
 
 #### 总结
 
