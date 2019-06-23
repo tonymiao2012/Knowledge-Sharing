@@ -12,12 +12,12 @@
 + Web Server internally maintains a Limited Thread pool to provide services to the Client Requests.
 + Web Server is in infinite Loop and waiting for Client Incoming Requests
 + Web Server receives those requests.
-1. Web Server pickup one Client Request
-2. Pickup one Thread from Thread pool
-3. Assign this Thread to Client Request
-4. This Thread will take care of reading Client request, processing Client request, performing any Blocking IO Operations (if required) and preparing Response
-5. This Thread sends prepared response back to the Web Server
-6. Web Server in-turn sends this response to the respective Client.
+	+ Web Server pickup one Client Request
+	+ Pickup one Thread from Thread pool
+	+ Assign this Thread to Client Request
+	+ This Thread will take care of reading Client request, processing Client request, performing any Blocking IO Operations (if required) and preparing Response
+	+ This Thread sends prepared response back to the Web Server
+	+ Web Server in-turn sends this response to the respective Client.
 
 ![Request Response Model](../images/Request-Response-Model.png)
 
@@ -35,12 +35,12 @@ Node JS并不遵循上面的基于Request/response的多线程无状态模式（
 6. Even Loop checks any Client Request is placed in Event Queue. If no, then wait for incoming requests for indefinitely.
 7. If yes, then pick up one Client Request from Event Queue
 Starts process that Client Request
-8. If that Client Request Does Not requires any Blocking IO Operations, then process everything, prepare response and send it back to client.
-9. If that Client Request requires some Blocking IO Operations like interacting with Database, File System, External Services then it will follow different approach
-10. Checks Threads availability from Internal Thread Pool
-11. Picks up one Thread and assign this Client Request to that thread.
-12. That Thread is responsible for taking that request, process it, perform Blocking IO operations, prepare response and send it back to the Event Loop
-13. Event Loop in turn, sends that Response to the respective Client.
+	+ If that Client Request Does Not requires any Blocking IO Operations, then process everything, prepare response and send it back to client.
+	+ If that Client Request requires some Blocking IO Operations like interacting with Database, File System, External Services then it will follow different approach
+		+ Checks Threads availability from Internal Thread Pool
+		+ Picks up one Thread and assign this Client Request to that thread.
+		+ That Thread is responsible for taking that request, process it, perform Blocking IO operations, prepare response and send it back to the Event Loop
+		+ Event Loop in turn, sends that Response to the respective Client.
 
 ![NodeJS Model](../images/NodeJS-Model.png)
 
