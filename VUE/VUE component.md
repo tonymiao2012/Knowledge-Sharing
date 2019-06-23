@@ -16,7 +16,7 @@
 
 在使用vueify时候，需要import一个组件的配置对象，这时建议全部使用首字母大写的命名方式，如：
 <pre><code>
-   import MyComponent from './my-component'
+import MyComponent from './my-component'
 
    export default {
      components: {
