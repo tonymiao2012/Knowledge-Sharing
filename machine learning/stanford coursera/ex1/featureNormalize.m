@@ -25,11 +25,13 @@ sigma = zeros(1, size(X, 2));
 %
 % Hint: You might find the 'mean' and 'std' functions useful.
 %       
+mean_ = mean(X, 1);
+std_ = std(X, 1);
 
+mu = X - mean_;
+sigma = X ./ std_;
 
-
-
-
+X_norm = (X - mean_) ./ std_;
 
 
 
