@@ -6,11 +6,11 @@ function [J, grad] = costFunctionReg(theta, X, y, lambda)
 
 % Initialize some useful values
 m = length(y); % number of training examples
-n = length(theta);
+
 % You need to return the following variables correctly 
 J = 0;
 grad = zeros(size(theta));
-tmp = ones(1, length(theta(2:n)));
+tmp = ones(1, length(theta(2:end)));
 
 % ====================== YOUR CODE HERE ======================
 % Instructions: Compute the cost of a particular choice of theta.
@@ -21,7 +21,7 @@ z = X * theta;
 lpart = (-y)' * log(sigmoid(z));
 rpart = (1 - y)' * log(1 - sigmoid(z));
 
-J = (1 / m) * (lpart - rpart) + (lambda / (2 * m)) * (tmp * (theta(2:n) .^ 2));
+J = (1 / m) * (lpart - rpart) + (lambda / (2 * m)) * (tmp * (theta(2:end) .^ 2));
 
 gradOrd = (1 / m) * ((sigmoid(z) - y)' * X);
 grad = gradOrd' + (lambda / m) * theta;
